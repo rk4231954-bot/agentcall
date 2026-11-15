@@ -6,7 +6,7 @@ import { motion } from "motion/react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
-import { Singularity } from "@/components/singularity";
+import { Logo } from "@/components/logo";
 import { api, ApiError, errorMessage, type User } from "@/lib/api";
 import { Banner, Button, Card, ease, Input } from "./ui";
 
@@ -50,7 +50,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         className="relative w-full max-w-[400px]"
       >
         <Link href="/" className="mx-auto mb-8 flex w-fit items-center gap-2.5 text-sm font-semibold tracking-tight">
-          <Singularity size={26} />
+          <Logo size={32} />
           agentcall
         </Link>
         <Card className="p-7 sm:p-8">

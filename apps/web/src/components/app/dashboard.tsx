@@ -16,7 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { GitHubIcon, OpenCodeIcon, SlackIcon } from "@/components/brand-icons";
-import { Singularity } from "@/components/singularity";
+import { Logo } from "@/components/logo";
 import { api, errorMessage, type Bot, type Integrations, type Task, type User } from "@/lib/api";
 import { BotForm, EMOJI } from "./bot-form";
 import { useRedirect } from "./onboarding";
@@ -72,7 +72,7 @@ export function Dashboard() {
         <header className="sticky top-0 z-30 border-b border-white/[0.06] bg-black/80 backdrop-blur-xl">
           <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5">
             <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
-              <Singularity size={22} />
+              <Logo size={28} />
               agentcall
             </Link>
             <div className="flex items-center gap-1">
@@ -299,7 +299,7 @@ function TaskList({ tasks, bots, onChange }: { tasks: Task[] | null; bots: Bot[]
   if (!tasks.length) {
     return (
       <Card className="flex flex-col items-center px-6 py-14 text-center">
-        <Singularity size={44} />
+        <Logo size={44} />
         <p className="mt-6 font-medium text-white">Nothing yet</p>
         <p className="mt-1 max-w-xs text-sm text-neutral-500">Mention a bot in Slack or hand over a task above. Its progress shows up here.</p>
       </Card>

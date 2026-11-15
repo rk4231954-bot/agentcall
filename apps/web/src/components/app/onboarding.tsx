@@ -14,7 +14,7 @@ import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState, type FormEvent, type ReactNode } from "react";
 import { GitHubIcon, OpenCodeIcon, SlackIcon } from "@/components/brand-icons";
-import { Singularity } from "@/components/singularity";
+import { Logo } from "@/components/logo";
 import { api, errorMessage, type Bot, type Channel, type OnboardingStatus } from "@/lib/api";
 import { Backdrop } from "./auth-form";
 import { BotForm } from "./bot-form";
@@ -105,7 +105,7 @@ export function Onboarding() {
         <div className="relative mx-auto max-w-[1040px]">
           <header className="flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight">
-              <Singularity size={24} />
+              <Logo size={30} />
               agentcall
             </Link>
             {step && step !== "done" && (
@@ -769,7 +769,7 @@ function DoneStep({ status, onFix }: { status: OnboardingStatus; onFix: (id: Ste
         animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 160, damping: 16 }}
       >
-        <Singularity size={96} className="sg-lg" />
+        <Logo size={112} className="drop-shadow-[0_0_40px_rgb(246_195_91_/_0.35)]" />
       </motion.div>
       <h1 className="mt-10 text-3xl font-semibold tracking-tight text-white">
         {missing.length ? "Almost there" : "Your team just grew"}
