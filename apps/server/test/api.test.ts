@@ -251,3 +251,14 @@ describe("slack events with only a signing secret", () => {
     expect((await t.call("GET", "/health")).status).toBe(200);
   });
 });
+
+test("session cookie is Secure when the web app is on https", async () => {
+  await t.close();
+  t = await setup({ WEB_URL: "https://agentcall-web.vercel.app" });
+  const res = await t.app.request("/api/v1/auth/signup", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ name: "A", email: "a@example.com", password: "12345678" }),
+  });
+  expect(res.headers.get("set-cookie")).toContain("Secure");
+});

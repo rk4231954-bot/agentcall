@@ -15,6 +15,7 @@ const DUMMY_HASH = await hashPassword("agentcall-timing-equalizer");
 
 export function authRoutes(deps: Deps) {
   const limit = rateLimiter(10, 60_000);
+  const secureCookies = deps.env.WEB_URL.startsWith("https:") || deps.env.NODE_ENV === "production";
   const clientKey = (ip: string | undefined, mail: string) => `${ip ?? "?"}:${mail}`;
 
   return new Hono()
@@ -32,7 +33,7 @@ export function authRoutes(deps: Deps) {
           .insert(users)
           .values({ name: body.name, email: body.email, passwordHash: await hashPassword(body.password) })
           .returning();
-        await startSession(c, deps.db, user!.id);
+        await startSession(c, deps.db, user!.id, secureCookies);
         return ok(c, { user: publicUser(user!) }, 201);
       },
     )
@@ -44,7 +45,7 @@ export function authRoutes(deps: Deps) {
       const [user] = await deps.db.select().from(users).where(eq(users.email, body.email)).limit(1);
       const valid = await verifyPassword(body.password, user?.passwordHash ?? DUMMY_HASH);
       if (!user || !valid) throw new ApiError(401, "invalid_credentials", "Email or password is incorrect.");
-      await startSession(c, deps.db, user.id);
+      await startSession(c, deps.db, user.id, secureCookies);
       return ok(c, { user: publicUser(user) });
     })
     .post("/logout", async (c) => {

@@ -12,13 +12,17 @@ const SESSION_DAYS = 30;
 export const hashPassword = (password: string) => Bun.password.hash(password, { algorithm: "argon2id" });
 export const verifyPassword = (password: string, hash: string) => Bun.password.verify(password, hash);
 
-export async function startSession(c: Context, db: Db, userId: string) {
+/**
+ * `secure` comes from runtime config (the web app's URL), not the request:
+ * behind Railway's proxy requests arrive over plain http.
+ */
+export async function startSession(c: Context, db: Db, userId: string, secure: boolean) {
   const token = randomToken();
   const expiresAt = new Date(Date.now() + SESSION_DAYS * 86_400_000);
   await db.insert(sessions).values({ id: sha256(token), userId, expiresAt });
   setCookie(c, SESSION_COOKIE, token, {
     httpOnly: true,
-    secure: new URL(c.req.url).protocol === "https:" || process.env.NODE_ENV === "production",
+    secure,
     sameSite: "Lax",
     path: "/",
     expires: expiresAt,
