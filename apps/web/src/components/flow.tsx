@@ -2,7 +2,7 @@ import { HugeiconsIcon } from "@hugeicons/react";
 import { GitPullRequestIcon, Video01Icon } from "@hugeicons/core-free-icons";
 import type { ReactNode } from "react";
 import { ClaudeIcon, CodexIcon, OpenCodeIcon, SlackIcon } from "@/components/brand-icons";
-import { Singularity } from "@/components/singularity";
+import { SpaceTile } from "@/components/space/space-tile";
 
 // Trigger → agentcall → agents → results. Two hand-tuned layouts share the
 // same nodes: horizontal on lg+, vertical below. Nodes are HTML positioned in
@@ -76,7 +76,7 @@ const MOBILE: Layout = {
 
 const LABELS: Record<NodeKey, { step?: string; title: string; body: string }> = {
   slack: { step: "01", title: "Someone asks", body: "A client reports an issue in Slack" },
-  hub: { step: "02", title: "agentcall routes it", body: "To the agent best suited for it" },
+  hub: { step: "02", title: "agentcall routes it", body: "One request in, the right agent out" },
   agents: { step: "03", title: "Agents work it", body: "Claude Code, Codex and OpenCode" },
   pr: { title: "Pull request", body: "With the fix and tests" },
   video: { title: "Screen recording", body: "The bug, reproduced" },
@@ -102,7 +102,7 @@ function NodeVisual({ k }: { k: NodeKey }) {
         </Chip>
       );
     case "hub":
-      return <Singularity size={92} />;
+      return <SpaceTile kind="wormhole" className="size-28 lg:size-44" />;
     case "agents":
       return (
         <Chip className="h-12 gap-3 rounded-full px-4">
@@ -202,9 +202,9 @@ function Diagram({ layout, className, compact }: { layout: Layout; className: st
               <NodeVisual k={k} />
             </div>
             <div
-              className={`flow-pop absolute w-40 ${
+              className={`flow-pop absolute ${compact && !t.step ? "w-28" : "w-40"} ${
                 l.align === "center" ? "-translate-x-1/2 text-center" : "-translate-y-1/2 text-left"
-              } ${compact && !t.step ? "w-28" : ""}`}
+              }`}
               style={{ left: pct(l.x, layout.w), top: pct(l.y, layout.h), transitionDelay: delay }}
             >
               {t.step && <p className="font-mono text-[11px] text-gold/80">{t.step}</p>}

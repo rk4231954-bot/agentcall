@@ -2,12 +2,14 @@
 
 import { useEffect, useRef, useState } from "react";
 import { ClaudeIcon, CodexIcon, OpenCodeIcon, SlackIcon } from "@/components/brand-icons";
-import { createEngine, detectTier } from "./engine";
+import { createBlackHole, LIVE_FROM } from "@/components/space/blackhole";
+import { detectTier } from "@/components/space/gl";
 
+// Captions follow the scene: the star falls in, is torn apart, becomes the disk.
 const CAPTIONS = [
-  { from: 0.16, to: 0.42, title: "A client reports an issue.", body: "It lands in your Slack channel." },
-  { from: 0.44, to: 0.68, title: "Agents pull it apart.", body: "They reproduce it, read the code and find the cause." },
-  { from: 0.7, to: 1.01, title: "And turn it into a fix.", body: "A PR, a screen recording and a reply in the thread." },
+  { from: 0.12, to: 0.4, title: "A client reports an issue.", body: "It lands in your Slack channel." },
+  { from: 0.42, to: 0.68, title: "Agents pull it apart.", body: "They reproduce it, read the code and find the cause." },
+  { from: 0.7, to: 1.2, title: "And turn it into a fix.", body: "A PR, a screen recording and a reply in the thread." },
 ];
 
 const smooth = (a: number, b: number, x: number) => {
@@ -31,7 +33,7 @@ export function Hero() {
     const canvas = canvasRef.current;
     if (!root || !canvas) return;
 
-    const engine = createEngine(canvas, detectTier());
+    const engine = createBlackHole(canvas, detectTier(), "hero");
     if (!engine) setFallback(true);
 
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
@@ -77,9 +79,11 @@ export function Hero() {
       // Critically damped follow: wheel steps and touch flings both glide.
       current += (target - current) * (1 - Math.exp(-dt * 7));
       if (Math.abs(target - current) < 1e-4) current = target;
-      if (!reduced) time += dt * 2.6;
+      // Before the star arrives the scene is static, so only redraw on scroll.
+      const live = current > LIVE_FROM && !reduced;
+      if (live) time += dt * 2.4;
 
-      if (engine && (!reduced || Math.abs(current - lastDrawn) > 1e-4)) {
+      if (engine && (live || Math.abs(current - lastDrawn) > 1e-5)) {
         engine.render(current, time);
         lastDrawn = current;
       }
@@ -112,7 +116,10 @@ export function Hero() {
 
     // Only resize on real layout changes; mobile URL-bar jitter is absorbed
     // because the canvas is sized in svh.
-    const ro = new ResizeObserver(() => engine?.resize());
+    const ro = new ResizeObserver(() => {
+      engine?.resize();
+      lastDrawn = -1;
+    });
     ro.observe(canvas);
 
     readScroll();

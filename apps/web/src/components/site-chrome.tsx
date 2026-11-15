@@ -1,7 +1,8 @@
 import { HugeiconsIcon } from "@hugeicons/react";
 import { ArrowUpRight01Icon } from "@hugeicons/core-free-icons";
 import { GitHubIcon } from "@/components/brand-icons";
-import { Singularity } from "@/components/singularity";
+import { Logo } from "@/components/logo";
+import { SpaceTile } from "@/components/space/space-tile";
 
 export const REPO_URL = "https://github.com/rk4231954-bot/agentcall";
 export const AUTHOR = { name: "Kiran", username: "rk4231954-bot", url: "https://github.com/rk4231954-bot" };
@@ -11,7 +12,7 @@ export function Nav() {
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-black/90 via-black/40 to-transparent">
       <nav className="pointer-events-auto mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
         <a href="#" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight text-white">
-          <Singularity size={22} />
+          <Logo size={26} />
           agentcall
         </a>
         <a
@@ -31,8 +32,8 @@ export function Nav() {
 export function FinalCta() {
   return (
     <section data-reveal className="reveal flex flex-col items-center px-6 pb-28 pt-8 text-center md:pb-36">
-      <Singularity size={140} className="sg-lg" />
-      <h2 className="mt-12 max-w-2xl text-balance text-3xl font-semibold tracking-tight text-white md:text-5xl">
+      <SpaceTile kind="blackhole" className="-my-10 aspect-[16/9] w-[min(92vw,640px)]" />
+      <h2 className="mt-4 max-w-2xl text-balance text-3xl font-semibold tracking-tight text-white md:text-5xl">
         Put agents on your team.
       </h2>
       <p className="mt-4 max-w-md text-pretty text-neutral-400">
@@ -57,7 +58,7 @@ export function Footer() {
     <footer className="border-t border-white/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-neutral-500 sm:flex-row">
         <span className="flex items-center gap-2 text-neutral-300">
-          <Singularity size={16} />
+          <Logo size={18} />
           agentcall
         </span>
         <p>

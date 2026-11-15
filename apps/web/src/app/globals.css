@@ -58,69 +58,6 @@ html {
     #000;
 }
 
-/* ---------- mini black hole ---------- */
-
-.sg {
-  position: relative;
-  display: inline-block;
-  flex: none;
-  isolation: isolate;
-}
-.sg > span {
-  position: absolute;
-  border-radius: 9999px;
-}
-.sg-glow {
-  inset: -45%;
-  background: radial-gradient(closest-side, rgb(246 195 91 / 0.22), transparent 75%);
-}
-.sg-ring {
-  inset: -14%;
-  background: radial-gradient(
-    closest-side,
-    transparent 76%,
-    rgb(255 226 160 / 0.95) 80%,
-    rgb(246 160 60 / 0.45) 88%,
-    transparent 100%
-  );
-}
-.sg-core {
-  inset: 0;
-  background: #000;
-}
-.sg-disk {
-  z-index: 2;
-  left: 50%;
-  top: 50%;
-  width: 230%;
-  aspect-ratio: 1;
-  transform: translate(-50%, -50%) scaleY(0.17);
-}
-.sg-disk-spin {
-  position: absolute;
-  inset: 0;
-  border-radius: 9999px;
-  background: conic-gradient(
-    from 0deg,
-    #fff1c9,
-    #f6c35b 15%,
-    #b85a1c 40%,
-    #f6c35b 60%,
-    #fff1c9 80%,
-    #fff1c9
-  );
-  -webkit-mask: radial-gradient(closest-side, transparent 40%, #000 46%, #000 62%, transparent 100%);
-  mask: radial-gradient(closest-side, transparent 40%, #000 46%, #000 62%, transparent 100%);
-  animation: sg-spin 7s linear infinite;
-}
-.sg-lg .sg-glow {
-  inset: -80%;
-  background: radial-gradient(closest-side, rgb(246 195 91 / 0.18), transparent 80%);
-}
-@keyframes sg-spin {
-  to { transform: rotate(1turn); }
-}
-
 /* ---------- scroll reveals ---------- */
 
 .reveal {
