@@ -1,0 +1,453 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>agentcall — Project Overview</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm 18mm 16mm; }
+  :root { --ink:#16130e; --muted:#5f5a52; --line:#e7e1d6; --gold:#c98a1b; --gold-soft:#fbf3e2; --dark:#0b0a08; }
+  * { box-sizing: border-box; }
+  body { font-family: "Segoe UI", system-ui, -apple-system, sans-serif; color: var(--ink); font-size: 10.5pt; line-height: 1.55; margin: 0; }
+  h1, h2, h3 { line-height: 1.2; margin: 0; }
+  h2 { font-size: 17pt; margin: 0 0 10px; padding-top: 4px; letter-spacing: -0.01em; }
+  h2 .n { color: var(--gold); font-weight: 600; margin-right: 8px; }
+  h3 { font-size: 12pt; margin: 18px 0 6px; }
+  p { margin: 0 0 9px; }
+  ul, ol { margin: 0 0 10px; padding-left: 20px; }
+  li { margin: 2px 0; }
+  code, .mono { font-family: "Cascadia Code", Consolas, monospace; font-size: 9pt; background: #f4f1ea; padding: 1px 4px; border-radius: 4px; }
+  section { break-before: page; }
+  .avoid { break-inside: avoid; }
+  table { width: 100%; border-collapse: collapse; margin: 8px 0 14px; font-size: 9.5pt; break-inside: auto; }
+  th, td { text-align: left; vertical-align: top; padding: 6px 8px; border-bottom: 1px solid var(--line); }
+  th { background: #f7f4ee; font-weight: 600; }
+  tr { break-inside: avoid; }
+  .lead { font-size: 11.5pt; color: var(--muted); }
+  .note { background: var(--gold-soft); border-left: 3px solid var(--gold); padding: 9px 12px; border-radius: 0 8px 8px 0; margin: 10px 0 14px; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .card { border: 1px solid var(--line); border-radius: 10px; padding: 11px 13px; break-inside: avoid; }
+  .card h4 { margin: 0 0 4px; font-size: 10.5pt; }
+  .card p { margin: 0; color: var(--muted); font-size: 9.5pt; }
+
+  /* cover */
+  .cover { height: 255mm; display: flex; flex-direction: column; justify-content: space-between; background: var(--dark); color: #f5efe3; margin: -18mm -16mm 0; padding: 30mm 22mm; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .cover .hole { width: 120px; height: 120px; border-radius: 50%; background: radial-gradient(circle, #000 0 38%, #ffe2a0 41%, #f6c35b 47%, rgba(232,137,44,.5) 56%, transparent 70%); box-shadow: 0 0 80px 10px rgba(246,195,91,.25); }
+  .cover h1 { font-size: 46pt; letter-spacing: -0.03em; margin-top: 34px; }
+  .cover .tag { font-size: 16pt; color: #d9cdb6; margin-top: 10px; max-width: 140mm; }
+  .cover .meta { font-size: 10pt; color: #a59a86; line-height: 1.8; }
+  .cover .meta b { color: #f5efe3; font-weight: 600; }
+
+  /* flow diagram */
+  .flow { display: flex; flex-direction: column; gap: 0; margin: 10px 0 14px; }
+  .step { display: grid; grid-template-columns: 34px 1fr; gap: 10px; align-items: start; break-inside: avoid; }
+  .step .dot { width: 26px; height: 26px; border-radius: 50%; background: var(--gold); color: #fff; font-weight: 700; font-size: 10pt; display: grid; place-items: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .step .body { border-left: 2px solid var(--line); margin-left: -23px; padding: 0 0 12px 30px; }
+  .step:last-child .body { border-left-color: transparent; }
+  .step .body b { display: block; }
+  .step .body span { color: var(--muted); font-size: 9.5pt; }
+
+  /* architecture */
+  .arch { display: grid; grid-template-columns: 1fr 1.25fr 1fr; gap: 10px; align-items: stretch; margin: 12px 0 6px; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .col { display: flex; flex-direction: column; gap: 10px; }
+  .box { border: 1.5px solid var(--ink); border-radius: 10px; padding: 9px 10px; background: #fff; font-size: 9pt; }
+  .box b { display: block; font-size: 10pt; margin-bottom: 2px; }
+  .box.core { background: var(--dark); color: #f5efe3; border-color: var(--dark); flex: 1; }
+  .box.core b { color: #f6c35b; }
+  .box.core ul { padding-left: 16px; margin: 4px 0 0; }
+  .box.vm { background: var(--gold-soft); border-color: var(--gold); }
+  .arrowrow { text-align: center; color: var(--muted); font-size: 8.5pt; margin: 4px 0 14px; }
+  .tree { font-family: Consolas, monospace; font-size: 9pt; background: #f7f4ee; border-radius: 10px; padding: 12px 14px; white-space: pre; line-height: 1.5; break-inside: avoid; }
+  .pill { display: inline-block; font-size: 8.5pt; padding: 1px 8px; border-radius: 99px; border: 1px solid var(--line); margin: 1px 2px; }
+  .ok { color: #157a4a; font-weight: 600; }
+  .todo { color: #a15c00; font-weight: 600; }
+  .toc li { margin: 4px 0; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+  <div>
+    <div class="hole"></div>
+    <h1>agentcall</h1>
+    <div class="tag">AI coding agents that join your Slack as teammates: they triage client issues, fix them, test the product on a real machine and open the pull request.</div>
+  </div>
+  <div class="meta">
+    <b>Project overview &amp; technical documentation</b><br />
+    Repository: github.com/rk4231954-bot/agentcall<br />
+    Web: agentcall-web.vercel.app · API: agentcallserver-production.up.railway.app<br />
+    Author: Kiran (@rk4231954-bot) · 15 November 2026
+  </div>
+</div>
+
+<section>
+  <h2>Contents</h2>
+  <ol class="toc">
+    <li>What agentcall is</li>
+    <li>How a task flows, end to end</li>
+    <li>Architecture</li>
+    <li>Repository structure &amp; tech stack</li>
+    <li>The user journey: sign-up, onboarding, dashboard, Slack</li>
+    <li>Bots and how messages are routed</li>
+    <li>What an agent run does on the VM</li>
+    <li>Working within the instabox free plan</li>
+    <li>Security model</li>
+    <li>Reliability: queue, callbacks and the watchdog</li>
+    <li>Data model</li>
+    <li>API reference</li>
+    <li>Deployment &amp; configuration</li>
+    <li>Testing &amp; verification</li>
+    <li>Current status and next steps</li>
+  </ol>
+
+  <h2 style="margin-top:26px"><span class="n">1</span>What agentcall is</h2>
+  <p class="lead">agentcall turns AI coding agents into members of a team's Slack channel. People talk to them the way they would talk to a colleague, and the agents do the work and report back in the same thread.</p>
+  <p>A company's team (engineers, support, security) hears about problems from clients: a crash, a security hole, a page that won't load. Today someone has to read the report, reproduce it, find the code, fix it and open a pull request. agentcall gives that work to agents:</p>
+  <ul>
+    <li><b>Triage</b> client issues, including sensitive ones like security reports.</li>
+    <li><b>Fix</b> the code and <b>open a pull request</b> on GitHub.</li>
+    <li><b>Test the product</b> in a real cloud machine with a browser, and <b>record the repro</b> so the team can see exactly what the client saw.</li>
+    <li><b>Report back</b> in Slack with a summary, the PR link and a <b>PDF report</b> with screenshots.</li>
+    <li><b>Answer questions</b> from the team about the product and code.</li>
+  </ul>
+  <p>Each workspace can create several <b>bots</b>, each with its own name, emoji, purpose and kind of work (for example "Sentinel 🛡️" for security, "Fixer 🐛" for bugs). OpenCode is the agent that powers every bot; the landing page also presents Claude Code and Codex as agents that work alongside.</p>
+  <div class="note"><b>Bring your own accounts.</b> Each user connects their own GitHub (through the agentcall GitHub App), their own Slack workspace, their own OpenCode API key (for models and inference) and their own instabox.sh API key (for the cloud machine the agent works in).</div>
+</section>
+
+<section>
+  <h2><span class="n">2</span>How a task flows, end to end</h2>
+  <p>Example: a support engineer writes in <code>#eng</code>: <i>"@agentcall Sentinel, a client reports an XSS on the login page"</i>.</p>
+  <div class="flow">
+    <div class="step"><div class="dot">1</div><div class="body"><b>Slack sends the mention to the server</b><span>The server checks Slack's signature, ignores retries of the same event, finds the workspace and picks the bot (here Sentinel, named in the message).</span></div></div>
+    <div class="step"><div class="dot">2</div><div class="body"><b>A task is queued</b><span>Stored in Postgres with the prompt, bot, repository and Slack thread. The bot reacts 👀 and posts one status message, "Got it, starting shortly", which it keeps editing as it works.</span></div></div>
+    <div class="step"><div class="dot">3</div><div class="body"><b>The worker claims it</b><span>One running task per user at a time (each user has one machine). The worker decrypts the user's keys and asks GitHub for a one-hour token limited to that single repository.</span></div></div>
+    <div class="step"><div class="dot">4</div><div class="body"><b>The machine wakes up</b><span>The user's instabox machine is created the first time, or resumed if it was asleep. The agentcall runner and OpenCode are installed once and reused.</span></div></div>
+    <div class="step"><div class="dot">5</div><div class="body"><b>The runner starts, detached</b><span>The task description goes to a file; the secrets (OpenCode key, GitHub token, callback token) go only into the process environment. The server's job for this task is now done; the machine reports back by itself.</span></div></div>
+    <div class="step"><div class="dot">6</div><div class="body"><b>OpenCode works</b><span>Clones the repository, investigates, edits the code, runs tests, takes screenshots in Chromium. Progress messages update the Slack status: "Cloning…", "Working: running tests…".</span></div></div>
+    <div class="step"><div class="dot">7</div><div class="body"><b>Results are delivered</b><span>Commits as agentcall[bot], pushes a branch, opens the pull request, renders a PDF report, uploads it into the Slack thread, then posts the summary and PR link.</span></div></div>
+    <div class="step"><div class="dot">8</div><div class="body"><b>The team keeps talking</b><span>Replying in the thread with <code>status</code> or <code>cancel</code> controls the task; any other reply becomes a follow-up task for the same bot, with the earlier answer as context.</span></div></div>
+  </div>
+  <p>The same task can be started from the web dashboard instead of Slack; progress, events, the summary and the PR link appear there live.</p>
+</section>
+
+<section>
+  <h2><span class="n">3</span>Architecture</h2>
+  <p>The server is a <b>lightweight orchestrator</b>. It never runs AI models itself: all agent work happens on each user's own instabox machine, so the server stays small, cheap and independent of how long agents take.</p>
+  <div class="arch avoid">
+    <div class="col">
+      <div class="box"><b>Slack</b>Mentions and thread replies come in as signed events. Bots post, edit status, react and upload files.</div>
+      <div class="box"><b>Web app</b> (Vercel)<br />Sign-up, onboarding, dashboard. Proxies <code>/api/v1/*</code> to the server so the login cookie is first-party.</div>
+      <div class="box"><b>GitHub</b><br />agentcall GitHub App: repo access, installation tokens, PRs, webhooks.</div>
+    </div>
+    <div class="col">
+      <div class="box core"><b>agentcall server</b> (Railway, Bun + Hono)
+        <ul>
+          <li>REST API under <code>/api/v1</code></li>
+          <li>Slack events &amp; GitHub webhooks</li>
+          <li>Task queue in Postgres</li>
+          <li>Worker: claims tasks, launches runs</li>
+          <li>Watchdog: keeps runs awake, recovers lost results</li>
+          <li>AES-256-GCM for every stored secret</li>
+        </ul>
+      </div>
+      <div class="box"><b>Postgres</b> (Railway)<br />Users, sessions, encrypted keys, connections, bots, tasks, events, machines, runs. Migrations run at startup.</div>
+    </div>
+    <div class="col">
+      <div class="box vm"><b>instabox machine</b> (one per user)<br />Debian with git, Node, Bun, Chromium. Runs <code>runner.js</code>, which drives the <b>OpenCode</b> CLI, git, the PR and the PDF report.</div>
+      <div class="box"><b>OpenCode</b><br />The agent and the models. Billed to the user's OpenCode account; free models work too.</div>
+      <div class="box"><b>instabox API</b><br />Create, resume, exec, files, activity leases.</div>
+    </div>
+  </div>
+  <div class="arrowrow">Slack/Web/GitHub → server → instabox machine (exec) · machine → server (<code>/api/v1/vm/runs/:id/events</code>, <code>/artifacts</code>) → Slack thread</div>
+
+  <h3>Why this design</h3>
+  <ul>
+    <li><b>Independent server.</b> The queue lives in Postgres, so restarts lose nothing. Slack messages, the dashboard and the API are all just ways to create tasks.</li>
+    <li><b>Agents near the code.</b> The machine has a real browser and a full checkout, so agents can reproduce issues, not only read code.</li>
+    <li><b>Machines report back on their own.</b> The server doesn't hold a connection open for a 40-minute run; the runner calls back, and the watchdog reads the machine's own log if a callback is lost.</li>
+    <li><b>OpenCode SDK vs binary.</b> The server talks to OpenCode's HTTP API only to verify keys and list models. The OpenCode binary is used only where it's required: inside the VM, to run the agent (free models also only work through the binary).</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">4</span>Repository structure &amp; tech stack</h2>
+  <div class="tree">agentcall/                      Turborepo + Bun monorepo, TypeScript
+├─ apps/
+│  ├─ web/                      Next.js 16 (App Router), Tailwind v4, Hugeicons, motion
+│  │  └─ src/
+│  │     ├─ app/                landing page, (auth)/login, (auth)/signup, onboarding,
+│  │     │                      dashboard, callback/github, callback/slack
+│  │     ├─ components/app/     ui, auth form, onboarding, bot form, dashboard, OAuth callback
+│  │     ├─ components/         landing: hero, black hole &amp; wormhole shaders, flow, logo
+│  │     ├─ lib/api.ts          typed client for the standard API format
+│  │     └─ proxy.ts            redirects signed-out users to /login
+│  └─ server/                   Bun + Hono
+│     ├─ src/
+│     │  ├─ app.ts              routes, security headers, CSRF check, error format
+│     │  ├─ index.ts            env, database + migrations, worker, graceful shutdown
+│     │  ├─ env.ts / deps.ts    validated config; dependency container (testable)
+│     │  ├─ lib/                crypto (AES-GCM), auth, http format, rate limit, log
+│     │  ├─ integrations/       github, slack, instabox, opencode clients
+│     │  ├─ routes/             auth, integrations, bots, tasks, slack-events, vm, github-webhooks
+│     │  ├─ services/           key decryption, Slack notifications
+│     │  ├─ vm/                 runner.vm.js (runs on the VM), vm-service.ts
+│     │  └─ worker/             queue claim, launch, VM events, watchdog
+│     ├─ test/                  API + crypto tests on an in-memory database
+│     ├─ scripts/               instabox-smoke.ts: live end-to-end check
+│     └─ Dockerfile             multi-stage, oven/bun:1.4.4 → 1.4.4-slim
+├─ packages/
+│  ├─ db/                       Drizzle schema, SQL migrations, Postgres/PGlite client
+│  ├─ shared/                   shared TS helpers
+│  └─ typescript-config/        tsconfig presets
+└─ .railway/railway.ts          Railway infrastructure as code</div>
+
+  <h3>Tech stack</h3>
+  <table>
+    <tr><th>Area</th><th>Choice</th><th>Why</th></tr>
+    <tr><td>Runtime</td><td>Bun 1.4 (server), Bun locally</td><td>Fast startup, built-in password hashing, bundler and test runner.</td></tr>
+    <tr><td>API</td><td>Hono 4, zod 4</td><td>Small, typed, fast; validation produces the standard error format.</td></tr>
+    <tr><td>Database</td><td>Postgres on Railway, Drizzle ORM</td><td>Typed queries and SQL migrations. Locally and in tests: PGlite (Postgres in WASM), no install needed.</td></tr>
+    <tr><td>Web</td><td>Next.js 16, Tailwind v4, motion, Hugeicons</td><td>App Router pages, smooth animations that respect "reduce motion".</td></tr>
+    <tr><td>Agent</td><td>OpenCode CLI ≥ 1.18 on the VM</td><td>Runs the user's models and subscription; JSON event stream for progress.</td></tr>
+    <tr><td>Machines</td><td>instabox.sh API</td><td>Cloud machines with a browser, per-user accounts.</td></tr>
+    <tr><td>GitHub</td><td>GitHub App + @octokit/webhooks</td><td>Repo-scoped short-lived tokens; commits under the app; standard webhook verification.</td></tr>
+    <tr><td>Hosting</td><td>Railway (server + Postgres), Vercel (web)</td><td>Dockerfile build for the server; Vercel for Next.js.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">5</span>The user journey</h2>
+  <h3>Sign-up and login</h3>
+  <p>Only name, email and password. Passwords are hashed with argon2id. Logging in sets a 30-day session cookie (httpOnly, Secure, SameSite=Lax). Signed-out visitors to the dashboard or onboarding are sent to <code>/login</code> and returned afterwards.</p>
+
+  <h3>Onboarding: five steps</h3>
+  <table>
+    <tr><th>#</th><th>Step</th><th>What happens</th><th>Required</th></tr>
+    <tr><td>1</td><td>GitHub</td><td>"Install GitHub App" opens GitHub; the user picks repositories. GitHub returns to <code>/callback/github</code>, and the server proves the installation belongs to this user before saving it.</td><td>Skippable</td></tr>
+    <tr><td>2</td><td>Slack</td><td>"Add to Slack" runs Slack OAuth. Back at <code>/callback/slack</code>, a searchable channel picker appears; the bot joins the chosen channel and says hello.</td><td>Skippable</td></tr>
+    <tr><td>3</td><td>OpenCode</td><td>The user pastes their API key; the server checks it with OpenCode at no cost, encrypts it and shows only the last 4 characters.</td><td>Yes</td></tr>
+    <tr><td>4</td><td>instabox</td><td>The user pastes their key; the server checks it and shows the workspace and plan (e.g. "free").</td><td>Yes</td></tr>
+    <tr><td>5</td><td>First bot</td><td>Templates (Sentinel, Fixer, Scout) or a custom bot: name, emoji, purpose, kind of work, model, repositories, optional instructions.</td><td>Yes</td></tr>
+  </table>
+  <p>The layout has a step rail on desktop and a progress bar on mobile. Steps slide in with direction-aware animations, connected services show a drawn check mark, and errors appear inline. The final screen lists anything still missing and links straight to it.</p>
+
+  <h3>Dashboard</h3>
+  <ul>
+    <li><b>Connections</b>: GitHub, Slack channel, OpenCode and instabox status at a glance.</li>
+    <li><b>Hand over a task</b>: pick a bot, describe the work, send (⌘/Ctrl + Enter).</li>
+    <li><b>Tasks</b>: live status (queued, working, done, failed, cancelled), the event timeline, the summary, the PR link, and Cancel.</li>
+    <li><b>Bots</b>: create, edit, pause/resume, delete.</li>
+  </ul>
+
+  <h3>In Slack</h3>
+  <ul>
+    <li><code>@agentcall …</code> in the channel starts a task; naming a bot ("Fixer, …") sends it to that bot.</li>
+    <li>Each bot posts under its own name and emoji and keeps <b>one</b> status message updated, so threads stay clean.</li>
+    <li>Thread replies: <code>status</code>, <code>cancel</code> / <code>stop</code>, or anything else as a follow-up.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">6</span>Bots and how messages are routed</h2>
+  <p>A bot is a configuration for the agent: who it is and what it's for. Its fields are turned into the instructions OpenCode receives.</p>
+  <table>
+    <tr><th>Field</th><th>Purpose</th></tr>
+    <tr><td>Name, emoji</td><td>How it appears in Slack, and how people address it.</td></tr>
+    <tr><td>Purpose</td><td>One or two sentences: what this bot is for.</td></tr>
+    <tr><td>Kind of work</td><td><span class="pill">triage</span><span class="pill">bugfix</span><span class="pill">security</span><span class="pill">testing</span><span class="pill">repro</span><span class="pill">review</span><span class="pill">support</span></td></tr>
+    <tr><td>Model</td><td>Any OpenCode model on the user's account; defaults to the free <code>big-pickle</code>.</td></tr>
+    <tr><td>Repositories</td><td>Which repositories it works on; the first is the default.</td></tr>
+    <tr><td>Instructions</td><td>Optional house rules, e.g. "always add a regression test".</td></tr>
+    <tr><td>Enabled</td><td>Paused bots don't take new work.</td></tr>
+  </table>
+  <h3>Routing a Slack message to a bot</h3>
+  <ol>
+    <li><b>Named:</b> if the message contains a bot's name, that bot gets it.</li>
+    <li><b>Skill match:</b> otherwise keywords are matched to kinds of work (e.g. "XSS", "CVE", "leak" → security; "crash", "broken" → bugfix; "record", "repro" → repro) and the best-matching enabled bot in that channel wins.</li>
+    <li><b>Thread follow-ups</b> always go to the bot already working in that thread.</li>
+    <li>If a repository is mentioned (<code>owner/name</code>) and the bot has it, that repository is used.</li>
+  </ol>
+</section>
+
+<section>
+  <h2><span class="n">7</span>What an agent run does on the VM</h2>
+  <p>The runner (<code>apps/server/src/vm/runner.vm.js</code>) is a single script that the server uploads to the machine once per version. Each run gets its own folder under <code>/data/home/agentcall/runs/&lt;runId&gt;</code>.</p>
+  <ol>
+    <li><b>Read the task</b> from <code>task.json</code> (no secrets in it).</li>
+    <li><b>Report "started"</b>, then a heartbeat every 30 seconds.</li>
+    <li><b>Clone</b> the repository (shallow, 50 commits) using a git credential helper that reads the GitHub token from the environment, and create the branch <code>agentcall/&lt;title&gt;-&lt;id&gt;</code>.</li>
+    <li><b>Run OpenCode</b> with the bot's model, purpose and instructions. Its JSON event stream becomes progress updates (tool steps, throttled to one every 20 s).</li>
+    <li><b>Collect</b> the summary the agent wrote and any screenshots or recordings it saved.</li>
+    <li><b>Commit and push</b> as agentcall[bot], and open the pull request through the GitHub API.</li>
+    <li><b>Render the PDF report</b> with headless Chromium: summary, PR link and embedded screenshots.</li>
+    <li><b>Upload</b> the PDF and any videos (max 25 MB each) to the server, which posts them into the Slack thread.</li>
+    <li><b>Report "done"</b> (or "failed" with the reason), then clean up the working copy.</li>
+  </ol>
+  <p>Every event is also appended to <code>events.jsonl</code> on the machine. That file is the source of truth if a callback never reaches the server.</p>
+</section>
+
+<section>
+  <h2><span class="n">8</span>Working within the instabox free plan</h2>
+  <p>The free plan allows <b>one machine</b> (4 vCPU, 8 GiB RAM, 20 GiB disk), pauses machines after 30 idle minutes and stops a single run at 120 minutes. agentcall is built around those limits:</p>
+  <div class="grid2">
+    <div class="card"><h4>One machine per user, kept</h4><p>Created once, named <code>agentcall-&lt;user&gt;</code>, resumed for every task. If it was deleted in instabox, a new one is created, but only if the workspace has room.</p></div>
+    <div class="card"><h4>Set up once</h4><p>The runner and a current OpenCode are installed on first use. Before each later run, one quick check (under a second) confirms they're current.</p></div>
+    <div class="card"><h4>One task at a time</h4><p>The queue never starts a second task for a user while one is running, so the single machine is never overloaded. Other users' tasks run in parallel.</p></div>
+    <div class="card"><h4>Awake only while working</h4><p>An activity lease keeps the machine awake during a run and is renewed every minute; it's released at the end, so the machine sleeps and stops costing resources.</p></div>
+    <div class="card"><h4>Time limits</h4><p>Runs are capped by <code>TASK_TIMEOUT_MINUTES</code> (default 45, max 110), safely under the 120-minute cap; the watchdog ends runs past their deadline.</p></div>
+    <div class="card"><h4>Light on disk</h4><p>Shallow clones, and each run's working copy is deleted afterwards.</p></div>
+  </div>
+</section>
+
+<section>
+  <h2><span class="n">9</span>Security model</h2>
+  <table>
+    <tr><th>Concern</th><th>How it's handled</th></tr>
+    <tr><td>Stored secrets</td><td>Every API key and Slack token is encrypted with <b>AES-256-GCM</b> (random IV per value, authentication tag). Each value is bound to its owner and purpose with associated data (e.g. <code>api_key:opencode:&lt;userId&gt;</code>), so a ciphertext copied to another row fails to decrypt. Only the last 4 characters are ever shown.</td></tr>
+    <tr><td>Passwords</td><td>argon2id. Unknown emails take the same time as wrong passwords, so accounts can't be discovered by timing. Login and sign-up are rate-limited (10 per minute per IP and email).</td></tr>
+    <tr><td>Sessions</td><td>Random token in an httpOnly, Secure, SameSite=Lax cookie; the database stores only its SHA-256, so a database leak doesn't leak sessions.</td></tr>
+    <tr><td>Cross-site requests</td><td>Browser requests that change data must come from the agentcall web origin; others are rejected.</td></tr>
+    <tr><td>GitHub access</td><td>Through the agentcall GitHub App only: the user chooses repositories. Each run gets an installation token <b>for one repository, valid one hour</b>. Commits and PRs come from agentcall[bot], never the user.</td></tr>
+    <tr><td>Claiming installations</td><td>A signed, expiring state ties the GitHub round trip to the user, and GitHub's OAuth code proves the installation is theirs, so nobody can attach someone else's installation.</td></tr>
+    <tr><td>Secrets on the VM</td><td>The OpenCode key, GitHub token and callback token are passed only as environment variables of the runner process, with exec history disabled; never written to disk or task files.</td></tr>
+    <tr><td>VM callbacks</td><td>Each run has its own random bearer token; only its hash is stored. A finished run can't be revived by a late callback.</td></tr>
+    <tr><td>Webhooks</td><td>Slack requests are verified with the signing secret (and a 5-minute window). GitHub webhooks are verified with the webhook secret using Octokit's standard <code>verify</code>/<code>receive</code>.</td></tr>
+    <tr><td>Slack permissions</td><td>Bot scopes only; no user token, so agentcall can never act as a person.</td></tr>
+    <tr><td>HTTP</td><td>Security headers on every response; errors never expose stack traces.</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">10</span>Reliability</h2>
+  <ul>
+    <li><b>Durable queue.</b> Tasks are rows in Postgres. A restart loses nothing: queued tasks wait, and runs that finished meanwhile are recovered.</li>
+    <li><b>Safe claiming.</b> Claims use <code>SELECT … FOR UPDATE SKIP LOCKED</code> inside a transaction, one at a time, enforcing one running task per user.</li>
+    <li><b>Duplicate events.</b> Slack retries the same event when it doesn't get a fast reply; each task stores Slack's <code>event_id</code> and duplicates are ignored. Applying the same VM event twice has no effect.</li>
+    <li><b>Lost callbacks.</b> Every minute the watchdog renews leases for active runs. If a run hasn't been heard from in 3 minutes, or is past its deadline, it reads <code>events.jsonl</code> from the machine and applies the final result; if there is none past the deadline, it stops the run and marks it "ran out of time".</li>
+    <li><b>Half-started tasks.</b> Tasks marked running for 15 minutes without a run (e.g. the server restarted mid-launch) are failed with a clear message.</li>
+    <li><b>Retries.</b> instabox calls retry on rate limits and temporary errors, reusing an idempotency key so retried actions never happen twice.</li>
+    <li><b>Graceful shutdown.</b> On deploy the server stops taking requests, waits for launches in progress, then closes the database.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">11</span>Data model</h2>
+  <table>
+    <tr><th>Table</th><th>Holds</th></tr>
+    <tr><td><code>users</code></td><td>Name, unique email, password hash, when onboarding was completed.</td></tr>
+    <tr><td><code>sessions</code></td><td>SHA-256 of each session token, owner, expiry.</td></tr>
+    <tr><td><code>api_keys</code></td><td>One OpenCode and one instabox key per user: encrypted key, last 4, details from verification (workspace, plan), verified time.</td></tr>
+    <tr><td><code>github_connections</code></td><td>The user's GitHub App installation id, account, repository selection.</td></tr>
+    <tr><td><code>slack_connections</code></td><td>Workspace, bot user, <b>encrypted</b> bot token, granted scopes, chosen channel.</td></tr>
+    <tr><td><code>bots</code></td><td>Name, emoji, purpose, instructions, kinds of work, model, channel, repositories, enabled.</td></tr>
+    <tr><td><code>machines</code></td><td>The user's instabox machine id and when it was set up.</td></tr>
+    <tr><td><code>tasks</code></td><td>Bot, source (slack, dashboard, api), status, prompt, repository, Slack channel/thread/status message, dedupe key, attempts, result (summary, PR), error, timings.</td></tr>
+    <tr><td><code>task_events</code></td><td>Timeline of each task: progress messages and outcomes.</td></tr>
+    <tr><td><code>vm_runs</code></td><td>Each attempt on a machine: status, hashed callback token, last heartbeat, deadline.</td></tr>
+  </table>
+  <p>Deleting a user deletes everything that belongs to them. Migrations live in <code>packages/db/drizzle</code> and are applied automatically when the server starts.</p>
+</section>
+
+<section>
+  <h2><span class="n">12</span>API reference</h2>
+  <p>All endpoints are under <code>/api/v1</code> and return one shape:</p>
+  <div class="tree">{ "ok": true,  "data": { … } }
+{ "ok": false, "error": { "code": "snake_case_code", "message": "Human readable", "details": [ … ] } }</div>
+  <table>
+    <tr><th>Area</th><th>Endpoints</th></tr>
+    <tr><td>Auth</td><td><code>POST auth/signup</code> · <code>POST auth/login</code> · <code>POST auth/logout</code> · <code>GET auth/me</code> · <code>DELETE auth/account</code></td></tr>
+    <tr><td>Onboarding</td><td><code>GET onboarding</code> · <code>POST onboarding/complete</code></td></tr>
+    <tr><td>Integrations</td><td><code>GET integrations</code> · <code>GET integrations/github/install</code> · <code>POST integrations/github/complete</code> · <code>GET integrations/github/repos</code> · <code>GET integrations/slack/install</code> · <code>POST integrations/slack/complete</code> · <code>GET integrations/slack/channels</code> · <code>PUT integrations/slack/channel</code> · <code>PUT integrations/opencode</code> · <code>GET integrations/opencode/models</code> · <code>PUT integrations/instabox</code> · <code>DELETE integrations/{github|slack|opencode|instabox}</code></td></tr>
+    <tr><td>Bots</td><td><code>GET bots</code> · <code>POST bots</code> · <code>GET/PATCH/DELETE bots/:id</code></td></tr>
+    <tr><td>Tasks</td><td><code>GET tasks</code> (filter by bot, paginate) · <code>POST tasks</code> · <code>GET tasks/:id</code> (with events) · <code>POST tasks/:id/cancel</code></td></tr>
+    <tr><td>Slack</td><td><code>POST slack/events</code> (signed by Slack)</td></tr>
+    <tr><td>VM callbacks</td><td><code>POST vm/runs/:id/events</code> · <code>POST vm/runs/:id/artifacts</code> (per-run bearer token)</td></tr>
+    <tr><td>Outside /api/v1</td><td><code>POST /github/events</code> (GitHub App webhook, Octokit-verified; events are logged, no actions yet) · <code>GET /health</code></td></tr>
+  </table>
+  <p>Common error codes: <code>unauthorized</code>, <code>validation_failed</code> (with per-field details), <code>not_found</code>, <code>rate_limited</code>, <code>invalid_api_key</code>, <code>integration_not_configured</code>, <code>forbidden_origin</code>, <code>invalid_signature</code>, <code>internal_error</code>.</p>
+</section>
+
+<section>
+  <h2><span class="n">13</span>Deployment &amp; configuration</h2>
+  <h3>Where it runs</h3>
+  <table>
+    <tr><th>Part</th><th>Host</th><th>Notes</th></tr>
+    <tr><td>Web</td><td>Vercel · agentcall-web.vercel.app</td><td>Builds <code>apps/web</code>. <code>SERVER_URL</code> is declared to Turborepo and baked into the API proxy at build time; the build fails if it's missing.</td></tr>
+    <tr><td>Server</td><td>Railway · agentcallserver-production.up.railway.app</td><td>Service <code>@agentcall/server</code>, built from <code>apps/server/Dockerfile</code> on every push to <code>main</code>. Health check <code>/health</code>; restarts on failure.</td></tr>
+    <tr><td>Database</td><td>Railway Postgres</td><td>Same project, private network; referenced as <code>${{Postgres.DATABASE_URL}}</code>.</td></tr>
+  </table>
+
+  <h3>Server environment variables</h3>
+  <table>
+    <tr><th>Variable</th><th>Meaning</th></tr>
+    <tr><td><code>DATABASE_URL</code></td><td>Postgres URL (locally: a PGlite folder, or empty for in-memory).</td></tr>
+    <tr><td><code>ENCRYPTION_KEY</code></td><td>32 random bytes (base64) for AES-256-GCM. Must be backed up; losing it makes stored keys unreadable.</td></tr>
+    <tr><td><code>WEB_URL</code> / <code>PUBLIC_SERVER_URL</code></td><td>Public addresses of the web app and of this server (VMs call back to the latter).</td></tr>
+    <tr><td><code>GITHUB_APP_ID</code>, <code>GITHUB_APP_SLUG</code>, <code>GITHUB_APP_PRIVATE_KEY</code>, <code>GITHUB_CLIENT_ID</code>, <code>GITHUB_CLIENT_SECRET</code>, <code>GITHUB_WEBHOOK_SECRET</code></td><td>The agentcall GitHub App.</td></tr>
+    <tr><td><code>SLACK_CLIENT_ID</code>, <code>SLACK_CLIENT_SECRET</code>, <code>SLACK_SIGNING_SECRET</code></td><td>The Slack app. The signing secret alone enables receiving events.</td></tr>
+    <tr><td><code>WORKER_CONCURRENCY</code> (4), <code>TASK_TIMEOUT_MINUTES</code> (45)</td><td>Tasks launched at once across users; hard cap per run.</td></tr>
+  </table>
+  <p>Web: <code>SERVER_URL</code> only. Users' OpenCode and instabox keys are never server configuration; each user enters their own during onboarding.</p>
+
+  <h3>GitHub App settings</h3>
+  <ul>
+    <li>Callback URL <code>https://agentcall-web.vercel.app/callback/github</code>, with "Request user authorization (OAuth) during installation" on.</li>
+    <li>Webhook URL <code>https://agentcallserver-production.up.railway.app/github/events</code>.</li>
+    <li>Repository permissions: Contents and Pull requests read &amp; write, Metadata read.</li>
+  </ul>
+  <h3>Slack app settings</h3>
+  <ul>
+    <li>Redirect URL <code>https://agentcall-web.vercel.app/callback/slack</code>; Socket Mode off.</li>
+    <li>Bot scopes: <code>app_mentions:read</code>, <code>channels:history</code>, <code>channels:join</code>, <code>channels:read</code>, <code>chat:write</code>, <code>chat:write.customize</code>, <code>files:write</code>, <code>groups:history</code>, <code>groups:read</code>, <code>reactions:write</code>. No user scopes.</li>
+    <li>Event Subscriptions URL <code>…/api/v1/slack/events</code>; bot events <code>app_mention</code>, <code>message.channels</code>, <code>message.groups</code>.</li>
+  </ul>
+</section>
+
+<section>
+  <h2><span class="n">14</span>Testing &amp; verification</h2>
+  <h3>Automated tests (20 passing)</h3>
+  <ul>
+    <li>Encryption: round trip, fresh IV, tamper detection, values bound to owner and purpose, signed state expiry.</li>
+    <li>Standard response format, validation details, unauthorized and cross-origin rejection.</li>
+    <li>Sign-up, login, logout, duplicate email; Secure cookie on https.</li>
+    <li>OpenCode and instabox key verification, encrypted storage, onboarding completion rules.</li>
+    <li>Bots scoped to their owner; one running task per user; cancelling.</li>
+    <li>Slack signature, URL challenge, routing to the right bot, retry de-duplication.</li>
+    <li>VM callbacks require the run's token and complete the task; GitHub webhook signature.</li>
+  </ul>
+  <h3>Live checks</h3>
+  <table>
+    <tr><th>Check</th><th>Result</th></tr>
+    <tr><td>Full run on a real free instabox machine (create → set up → OpenCode with a free model → PDF → callbacks → delete)</td><td class="ok">Passed in 44 s; repeat set-up check under 1 s</td></tr>
+    <tr><td>GitHub App credentials and private key against GitHub</td><td class="ok">Valid</td></tr>
+    <tr><td>Slack client credentials and signed URL challenge on production</td><td class="ok">Valid / verified</td></tr>
+    <tr><td>Production: health, migrations, sign-up through Vercel, Secure cookie, onboarding status</td><td class="ok">Working</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2><span class="n">15</span>Current status and next steps</h2>
+  <h3>Live today</h3>
+  <ul>
+    <li>Landing page, sign-up/login, onboarding, dashboard on Vercel.</li>
+    <li>Server and Postgres on Railway with GitHub and Slack configured.</li>
+    <li>Slack-triggered and dashboard-triggered tasks running OpenCode on each user's instabox machine, with PRs and PDF reports.</li>
+  </ul>
+  <h3>To finish setup</h3>
+  <ul>
+    <li>Confirm the Slack app's scopes, events and redirect URL, and the GitHub App's "Request user authorization during installation" setting, then run the first real onboarding.</li>
+    <li>Rotate the credentials that were shared in chat (Slack tokens and secrets, GitHub client secret) and update Railway.</li>
+    <li>Keep a safe backup of the production <code>ENCRYPTION_KEY</code>.</li>
+  </ul>
+  <h3>Planned improvements</h3>
+  <ul>
+    <li><b>Direct messages</b> to bots for sensitive security reports (<code>im:*</code> scopes, <code>message.im</code>).</li>
+    <li><b>Reading attachments</b> (<code>files:read</code>) so agents see the screenshots and logs clients send; <code>users:read</code> to credit reporters.</li>
+    <li><b>Uninstall handling</b> (<code>app_uninstalled</code>, <code>tokens_revoked</code>) to mark Slack disconnected automatically.</li>
+    <li><b>GitHub webhook actions</b>: today events are verified and logged only; next, react to PR reviews and comments so agents can address feedback.</li>
+    <li><b>Screen recordings</b> of repros in the report alongside screenshots.</li>
+    <li>Run Railway's <code>railway.ts</code> plan/apply from a machine with Node (the CLI's IaC evaluator needs Node).</li>
+  </ul>
+</section>
+
+</body>
+</html>
