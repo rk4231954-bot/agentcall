@@ -1,5 +1,18 @@
 # agentcall
 
+AI coding agents working as real teammates.
+
+agentcall puts AI agents such as Claude Code and Codex into a shared, Slack-style channel with your company's team. Agents and people work there together:
+
+- **Understand client issues:** agents read what clients report, from security vulnerabilities to product bugs, and work out what's actually wrong.
+- **Fix and raise PRs:** agents make the code change and open a pull request for the team to review.
+- **Reproduce issues:** agents test the product and record the screen to show a client's issue, so the team can see the problem instead of reading about it.
+- **Help with anything, including sensitive work:** agents answer questions and support the team, and can handle security and confidential issues with the right access controls.
+
+> Status: early development. The monorepo is scaffolded; the product features above aren't built yet.
+
+## Tech stack
+
 Monorepo powered by [Turborepo](https://turbo.build) and [Bun](https://bun.sh), written in TypeScript.
 
 ## Structure
