@@ -19,7 +19,7 @@ Monorepo powered by [Turborepo](https://turbo.build) and [Bun](https://bun.sh), 
 
 ```
 apps/
-  api/                  Bun HTTP server (@agentcall/api)
+  server/               Bun HTTP server (@agentcall/server)
   web/                  Next.js website — Tailwind v4, Hugeicons (@agentcall/web, port 3001)
 packages/
   shared/               Shared TS library (@agentcall/shared)
@@ -36,9 +36,9 @@ bun run typecheck    # type-check all packages
 bun run test         # run tests (bun test)
 ```
 
-Scope to one package with a filter, e.g. `bunx turbo run dev --filter=@agentcall/api`.
+Scope to one package with a filter, e.g. `bunx turbo run dev --filter=@agentcall/server`.
 
-Add a dependency to a workspace: `bun add <pkg> --cwd apps/api`.
+Add a dependency to a workspace: `bun add <pkg> --cwd apps/server`.
 Reference an internal package with `"@agentcall/shared": "workspace:*"`.
 
 > `next build` / `next start` need Node.js installed: under Bun's runtime they fail collecting page data (a Bun bug). `next dev` works under Bun.

@@ -10,8 +10,8 @@
         "typescript": "^7.0.2",
       },
     },
-    "apps/api": {
-      "name": "@agentcall/api",
+    "apps/server": {
+      "name": "@agentcall/server",
       "version": "0.0.0",
       "dependencies": {
         "@agentcall/shared": "workspace:*",
@@ -54,7 +54,7 @@
     },
   },
   "packages": {
-    "@agentcall/api": ["@agentcall/api@workspace:apps/api"],
+    "@agentcall/server": ["@agentcall/server@workspace:apps/server"],
 
     "@agentcall/shared": ["@agentcall/shared@workspace:packages/shared"],
 
