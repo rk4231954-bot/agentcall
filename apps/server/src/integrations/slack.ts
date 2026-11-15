@@ -22,6 +22,14 @@ export interface SlackAppConfig {
   signingSecret: string;
 }
 
+/** Slack request signing: v0=HMAC_SHA256(secret, "v0:{ts}:{body}"), within 5 minutes. */
+export function verifySlackSignature(secret: string, timestamp: string | undefined, signature: string | undefined, body: string) {
+  if (!timestamp || !signature) return false;
+  if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
+  const expected = `v0=${createHmac("sha256", secret).update(`v0:${timestamp}:${body}`).digest("hex")}`;
+  return safeEqual(expected, signature);
+}
+
 export class SlackApp {
   constructor(
     readonly config: SlackAppConfig,
@@ -61,12 +69,8 @@ export class SlackApp {
     return body;
   }
 
-  /** Slack request signing: v0=HMAC_SHA256(secret, "v0:{ts}:{body}"), within 5 minutes. */
   verify(timestamp: string | undefined, signature: string | undefined, body: string): boolean {
-    if (!timestamp || !signature) return false;
-    if (Math.abs(Date.now() / 1000 - Number(timestamp)) > 300) return false;
-    const expected = `v0=${createHmac("sha256", this.config.signingSecret).update(`v0:${timestamp}:${body}`).digest("hex")}`;
-    return safeEqual(expected, signature);
+    return verifySlackSignature(this.config.signingSecret, timestamp, signature, body);
   }
 }
 

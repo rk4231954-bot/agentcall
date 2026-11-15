@@ -234,3 +234,20 @@ describe("github webhooks", () => {
     });
   });
 });
+
+describe("slack events with only a signing secret", () => {
+  test("the Request URL challenge passes before OAuth is configured", async () => {
+    await t.close();
+    t = await setup({ SLACK_SIGNING_SECRET: "only-signing" });
+    const body = JSON.stringify({ type: "url_verification", challenge: "xyz" });
+    const ts = Math.floor(Date.now() / 1000).toString();
+    const sig = `v0=${createHmac("sha256", "only-signing").update(`v0:${ts}:${body}`).digest("hex")}`;
+    const r = await t.call("POST", "/api/v1/slack/events", body, {
+      "content-type": "application/json",
+      "x-slack-request-timestamp": ts,
+      "x-slack-signature": sig,
+    });
+    expect(r.body.challenge).toBe("xyz");
+    expect((await t.call("GET", "/health")).status).toBe(200);
+  });
+});

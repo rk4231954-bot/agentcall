@@ -2,7 +2,7 @@ import { and, desc, eq } from "drizzle-orm";
 import { Hono } from "hono";
 import { bots, slackConnections, tasks, type Bot } from "@agentcall/db";
 import type { Deps } from "../deps";
-import { SlackClient } from "../integrations/slack";
+import { SlackClient, verifySlackSignature } from "../integrations/slack";
 import { ApiError, errors, ok } from "../lib/http";
 import { getSlackToken } from "../services/keys";
 import { notifyReply, notifyStatus } from "../services/notify";
@@ -60,9 +60,12 @@ const REPO = /\b(?:github\.com\/)?([\w.-]+\/[\w.-]+?)(?:\.git)?\b/;
 
 export function slackEventRoutes(deps: Deps) {
   return new Hono().post("/", async (c) => {
-    if (!deps.slack) throw errors.notConfigured("Slack");
+    // Only the signing secret is needed to receive events, so the Request URL
+    // can be verified before the OAuth credentials are configured.
+    const secret = deps.env.SLACK_SIGNING_SECRET;
+    if (!secret) throw errors.notConfigured("Slack");
     const raw = await c.req.text();
-    if (!deps.slack.verify(c.req.header("x-slack-request-timestamp"), c.req.header("x-slack-signature"), raw)) {
+    if (!verifySlackSignature(secret, c.req.header("x-slack-request-timestamp"), c.req.header("x-slack-signature"), raw)) {
       throw new ApiError(401, "invalid_signature", "Slack signature didn't match.");
     }
     const body = JSON.parse(raw) as Envelope;
