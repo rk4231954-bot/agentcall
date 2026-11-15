@@ -42,3 +42,14 @@ Add a dependency to a workspace: `bun add <pkg> --cwd apps/server`.
 Reference an internal package with `"@agentcall/shared": "workspace:*"`.
 
 > `next build` / `next start` need Node.js installed: under Bun's runtime they fail collecting page data (a Bun bug). `next dev` works under Bun.
+
+## Deploying the server (Railway)
+
+`apps/server/Dockerfile` builds on `oven/bun:1.4.4` with the repo root as build context, and bundles the server into one file that runs on `oven/bun:1.4.4-slim`.
+
+Railway is configured with infrastructure as code in `.railway/railway.ts` (`railway.toml` is deprecated):
+
+```sh
+railway config plan    # preview changes
+railway config apply   # apply them
+```

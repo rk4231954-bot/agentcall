@@ -12,6 +12,7 @@
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
+    "railway": "^3.17.0",
     "turbo": "^2.11.11",
     "typescript": "^7.0.2"
   }
