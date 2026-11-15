@@ -1,0 +1,17 @@
+{
+  "name": "@agentcall/shared",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "bun test",
+    "clean": "rm -rf .turbo node_modules"
+  },
+  "devDependencies": {
+    "@agentcall/typescript-config": "workspace:*"
+  }
+}

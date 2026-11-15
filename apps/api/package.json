@@ -1,0 +1,19 @@
+{
+  "name": "@agentcall/api",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "bun --watch src/index.ts",
+    "start": "bun dist/index.js",
+    "build": "bun build src/index.ts --outdir dist --target bun",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist .turbo node_modules"
+  },
+  "dependencies": {
+    "@agentcall/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@agentcall/typescript-config": "workspace:*"
+  }
+}
