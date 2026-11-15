@@ -9,7 +9,7 @@ export default defineRailway(() => {
       builder: "DOCKERFILE",
       // Build context stays at the repo root so workspace packages resolve.
       dockerfilePath: "apps/server/Dockerfile",
-      watchPatterns: ["apps/server/**", "packages/shared/**", "package.json", "bun.lock"],
+      watchPatterns: ["apps/server/**", "packages/shared/**", "packages/db/**", "package.json", "bun.lock"],
     },
     deploy: {
       healthcheckPath: "/health",

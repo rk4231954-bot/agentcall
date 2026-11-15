@@ -1,4 +1,4 @@
 {
   "extends": "@agentcall/typescript-config/base.json",
-  "include": ["src"]
+  "include": ["src", "test", "scripts"]
 }

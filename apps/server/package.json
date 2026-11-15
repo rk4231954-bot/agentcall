@@ -6,14 +6,19 @@
   "scripts": {
     "dev": "bun --watch src/index.ts",
     "start": "bun dist/index.js",
-    "build": "bun build src/index.ts --outdir dist --target bun",
+    "build": "bun build src/index.ts --outdir dist --target bun --splitting --external @electric-sql/pglite",
     "typecheck": "tsc --noEmit",
     "test": "bun test",
     "clean": "rm -rf dist .turbo node_modules"
   },
   "dependencies": {
+    "@agentcall/db": "workspace:*",
     "@agentcall/shared": "workspace:*",
-    "hono": "^4.13.18"
+    "@hono/zod-validator": "^0.9.1",
+    "@octokit/webhooks": "^14.2.0",
+    "drizzle-orm": "^0.45.4",
+    "hono": "^4.13.18",
+    "zod": "^4.6.7"
   },
   "devDependencies": {
     "@agentcall/typescript-config": "workspace:*"

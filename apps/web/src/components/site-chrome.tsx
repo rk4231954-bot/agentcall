@@ -15,15 +15,26 @@ export function Nav() {
           <Logo size={30} />
           agentcall
         </a>
-        <a
-          href={REPO_URL}
-          target="_blank"
-          rel="noreferrer"
-          className="flex items-center gap-2 rounded-full border border-white/10 px-3.5 py-1.5 text-sm text-neutral-300 transition-colors hover:border-white/25 hover:text-white"
-        >
-          <GitHubIcon size={16} />
-          <span className="hidden sm:inline">GitHub</span>
-        </a>
+        <div className="flex items-center gap-2">
+          <a
+            href={REPO_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="GitHub"
+            className="grid size-9 place-items-center rounded-full text-neutral-400 transition-colors hover:text-white"
+          >
+            <GitHubIcon size={16} />
+          </a>
+          <a href="/login" className="hidden px-2 text-sm text-neutral-300 transition-colors hover:text-white sm:inline">
+            Sign in
+          </a>
+          <a
+            href="/signup"
+            className="cta rounded-full bg-white px-4 py-1.5 text-sm font-medium text-black transition-transform active:scale-[0.97]"
+          >
+            Get started
+          </a>
+        </div>
       </nav>
     </header>
   );
