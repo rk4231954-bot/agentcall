@@ -11,8 +11,8 @@ export function Nav() {
   return (
     <header className="pointer-events-none fixed inset-x-0 top-0 z-50 bg-gradient-to-b from-black/90 via-black/40 to-transparent">
       <nav className="pointer-events-auto mx-auto flex h-16 max-w-6xl items-center justify-between px-6">
-        <a href="#" className="flex items-center gap-2.5 text-sm font-semibold tracking-tight text-white">
-          <Logo size={26} />
+        <a href="#" className="flex items-center gap-2 text-sm font-semibold tracking-tight text-white">
+          <Logo size={30} />
           agentcall
         </a>
         <a
@@ -58,7 +58,7 @@ export function Footer() {
     <footer className="border-t border-white/[0.06]">
       <div className="mx-auto flex max-w-6xl flex-col items-center justify-between gap-4 px-6 py-8 text-sm text-neutral-500 sm:flex-row">
         <span className="flex items-center gap-2 text-neutral-300">
-          <Logo size={18} />
+          <Logo size={20} />
           agentcall
         </span>
         <p>
