@@ -1,13 +1,41 @@
-import { greet } from "@agentcall/shared";
-import { HugeiconsIcon } from "@hugeicons/react";
-import { AiPhone01Icon } from "@hugeicons/core-free-icons";
+import { Flow } from "@/components/flow";
+import { Hero } from "@/components/hero/hero";
+import { RevealObserver } from "@/components/reveal-observer";
+import { FinalCta, Footer, Nav } from "@/components/site-chrome";
+import { Thread } from "@/components/thread";
+import { UseCases } from "@/components/use-cases";
 
 export default function Home() {
   return (
-    <main className="flex min-h-dvh flex-col items-center justify-center gap-4 p-8">
-      <HugeiconsIcon icon={AiPhone01Icon} size={48} strokeWidth={1.5} className="text-indigo-500" />
-      <h1 className="text-4xl font-semibold tracking-tight">agentcall</h1>
-      <p className="text-neutral-500">{greet("web")}</p>
-    </main>
+    <>
+      <Nav />
+      <main>
+        <Hero />
+        <section className="relative pb-24 md:pb-32">
+          <Thread
+            label="How it works"
+            title="From a message to a merged fix."
+            body="Something gets reported, agentcall picks the right agent, and the result lands back where it started."
+          />
+          <div className="mt-14 md:mt-20">
+            <Flow />
+          </div>
+        </section>
+        <section className="relative pb-24 md:pb-32">
+          <Thread
+            label="In your Slack"
+            title="They work where your team already talks."
+            body="Security reports, bugs, quick questions. Agents reply in the thread like everyone else."
+          />
+          <div className="mt-14 md:mt-16">
+            <UseCases />
+          </div>
+        </section>
+        <Thread label="Get started" />
+        <FinalCta />
+      </main>
+      <Footer />
+      <RevealObserver />
+    </>
   );
 }
