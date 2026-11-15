@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import { Logo } from "@/components/logo";
 import { createBlackHole } from "./blackhole";
 import { detectTier } from "./gl";
-import { CAST_PERIOD, createWormhole } from "./wormhole";
+import { createWormhole } from "./wormhole";
 
 type Kind = "blackhole" | "wormhole";
 
@@ -24,8 +24,8 @@ export function SpaceTile({ kind, className = "" }: { kind: Kind; className?: st
     let raf = 0;
     let visible = false;
     let last = 0;
-    // The wormhole opens with the agentcall mark already partway through.
-    let time = kind === "blackhole" ? 40 : CAST_PERIOD * 0.6;
+    // The wormhole opens on the agentcall mark.
+    let time = kind === "blackhole" ? 40 : 0;
     const minFrameMs = kind === "blackhole" ? 32 : 0;
 
     const ensure = () => {
