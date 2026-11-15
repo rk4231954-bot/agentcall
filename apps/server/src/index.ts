@@ -1,4 +1,8 @@
-import { createServer } from "./app";
+import { app } from "./app";
 
-const server = createServer();
+const server = Bun.serve({
+  port: process.env.PORT ?? 3000,
+  fetch: app.fetch,
+});
+
 console.log(`server listening on ${server.url}`);

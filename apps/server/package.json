@@ -12,7 +12,8 @@
     "clean": "rm -rf dist .turbo node_modules"
   },
   "dependencies": {
-    "@agentcall/shared": "workspace:*"
+    "@agentcall/shared": "workspace:*",
+    "hono": "^4.13.18"
   },
   "devDependencies": {
     "@agentcall/typescript-config": "workspace:*"
